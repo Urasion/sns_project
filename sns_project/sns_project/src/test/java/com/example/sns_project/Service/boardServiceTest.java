@@ -20,9 +20,5 @@ public class boardServiceTest {
     private BoardService boardService;
     @Autowired
     private FileService fileService;
-    @Test
-    @Rollback(value = false)
-    void commentTest(){
 
-    }
 }

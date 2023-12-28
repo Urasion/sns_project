@@ -11,6 +11,7 @@ import com.example.sns_project.service.MemberService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
@@ -34,7 +35,11 @@ public class BoardController {
     public ResponseDto saveBoard(@AuthenticationPrincipal CustomDetails customDetails, @ModelAttribute BoardDto boardDto) throws IOException {
         log.info("게시글 저장 핸들러");
         Board board = boardService.saveBoard(customDetails.getUsername(), boardDto);
-        return fileService.saveBoardFile(board, boardDto.getFiles());
+        if(boardDto.getFiles() == null){
+            return new ResponseDto(HttpStatus.OK.value(), "저장 완료", null);
+        }else{
+            return fileService.saveBoardFile(board, boardDto.getFiles());
+        }
     }
     @GetMapping("/board/{name}")
     public ResponseDto getBoardByName(@PathVariable String name, @RequestParam String pageStart, @RequestParam String pageCount) throws MalformedURLException {
