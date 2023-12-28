@@ -9,8 +9,38 @@
         background-color: #616161;
     }
     &.profile_user_post {
-        flex: 1 0 14.125rem;
-        margin: 0 0 4% 0;
+        /* flex: 1 0 19.6875rem; */
+        margin: 2%;
+        width: 15rem;
+        
+        @media (max-width:1440px) {
+            /* width: 21rem;
+        }
+        @media (max-width:1333px) {
+            width: 20rem;
+        }
+        @media (max-width:1278px) {
+            width: 19rem; */
+            flex: 1 0 19rem;
+            max-width: 19rem;
+        }
+        @media (max-width:1224px) {
+            /* width: 28rem;
+        }
+        @media (max-width:1161px) {
+            width: 26rem;
+        }
+        @media (max-width:1092px) {
+            width: 23rem;
+        }
+        @media (max-width:987px) { */
+            flex: 1 0 19rem;
+            max-width: 20.5rem;
+        }
+        @media (max-width: 883px) {
+            flex: 1 0 25rem;
+            max-width: 680px;
+        }
     }
 }
 

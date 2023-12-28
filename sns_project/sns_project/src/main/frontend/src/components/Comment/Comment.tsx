@@ -6,6 +6,8 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import Loading from "../Common/Loading/Loading";
 import CommentInput from "./CommentInput/CommentInput";
 import { useS3 } from "../../hook/useS3";
+import { useState } from "react";
+import Button from "../Common/Button/Button";
 
 interface childProps {
   boardId: number;
@@ -48,37 +50,37 @@ interface FileDTO {
 
 const Comment = ({ boardId }: childProps) => {
   const isdarkmode = useSelector((state: RootState) => state.darkmodeSlice.isDarkmode);
+  const loginUserId = useSelector((state: RootState) => state.loginSlice.id);
+  const [hasPage, setHasPage] = useState(true);
   const pageCount = 50;
   const { getUrl } = useS3();
   const getComment = async (page: number) => {
     const res = await authInstance.get(
       `/comment/${boardId}?pageStart=${page}&pageCount=${pageCount}`,
     );
-    if (res.status === 500) {
-      return null;
+    if (res.data.result === null) {
+      setHasPage(false);
     }
     return res.data;
   };
-  // 없는거 불러올때 500뜨는중
+
+  const deleteComment = async (commentId: number | undefined) => {
+    if (commentId) {
+      await authInstance.delete(`/comment`, { data: { id: commentId } });
+    }
+  };
+
   const commentData = useInfiniteQuery(
     ["comment", boardId],
     ({ pageParam = 0 }) => getComment(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {
         const nextPage = allPages.length + pageCount;
-        return lastPage.result.length !== 0 ? nextPage : undefined;
-      },
-      onSuccess: (data) => {
-        data.pages.map(
-          (page) =>
-            page.result?.map(
-              (comment: comment) =>
-                (comment.member.profile.path = getUrl(comment.member.profile.path)),
-            ),
-        );
+        return lastPage.result?.length !== 0 ? nextPage : undefined;
       },
     },
   );
+  console.log(commentData.data?.pages, hasPage);
 
   return (
     <div className={`commentList_container ${isdarkmode && "darkmode"}`}>
@@ -89,16 +91,25 @@ const Comment = ({ boardId }: childProps) => {
           <p className={`notification ${isdarkmode && "darkmode"}`}>작성된 댓글이 없습니다.</p>
         </div>
       ) : (
-        commentData.data?.pages.map((el: commentResponse) =>
-          el.result.map((el: comment) => (
-            <div className={`comment ${isdarkmode && "darkmode"}`} key={el.commentId}>
-              <div className="comment_author_container">
-                <img className="comment_author" src={el.member.profile.path} />
-                <p className="comment_author_name">{el.member.name}</p>
+        commentData.data?.pages.map(
+          (el: commentResponse) =>
+            el.result?.map((el: comment) => (
+              <div className={`comment ${isdarkmode && "darkmode"}`} key={el.commentId}>
+                <div className="comment_author_container">
+                  <img className="comment_author" src={getUrl(el.member.profile.path)} />
+                  <p className="comment_author_name">{el.member.name}</p>
+                </div>
+                <p className="comment_content">{el.content}</p>
+                {el.member.id === loginUserId && (
+                  <Button
+                    text="삭제"
+                    type="button"
+                    design="black"
+                    onClick={() => deleteComment(el.commentId)}
+                  />
+                )}
               </div>
-              <p className="comment_content">{el.content}</p>
-            </div>
-          )),
+            )),
         )
       )}
       <CommentInput boardId={boardId} />

@@ -22,7 +22,7 @@ const GoogleLoginButton = () => {
   //   defaultInstance.post(`/oauth2/authorization/google`, {});
   // };
   const googlelogin = async () => {
-    location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google?redirect_uri=http://localhost:3000/oauth`;
+    location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google?redirect_uri=http://snsprojectbucket.s3-website.ap-northeast-2.amazonaws.com/oauth`;
   };
   return (
     <>

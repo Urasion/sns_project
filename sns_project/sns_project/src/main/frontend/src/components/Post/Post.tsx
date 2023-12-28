@@ -37,11 +37,10 @@ const Post = ({ info, isProfilePost, profileId }: childProps) => {
   const { getUrl } = useS3();
 
   const deletePost = async (post: board) => {
-    await authInstance.delete(`/board`, { data: post });
+    console.log(post);
+    await authInstance.delete(`/board`, { data: { id: post.id } });
   };
-  if (info.boardFiles?.length !== 0) {
-    info.boardFiles?.map((el) => (el.path = getUrl(el.path)));
-  }
+
   return (
     <div
       className={`post_container ${isdarkmode && "darkmode"} ${
@@ -57,7 +56,7 @@ const Post = ({ info, isProfilePost, profileId }: childProps) => {
       <div className={`post_content ${isdarkmode && "darkmode"}`}>{info.content}</div>
       <div className={`post_media_container ${isdarkmode && "darkmode"}`}>
         {info.boardFiles?.map((el) => (
-          <img className="post_media" src={el.path} alt={`${el.name} img`} key={el.id} />
+          <img className="post_media" src={getUrl(el.path)} alt={`${el.name} img`} key={el.id} />
         ))}
       </div>
       <div

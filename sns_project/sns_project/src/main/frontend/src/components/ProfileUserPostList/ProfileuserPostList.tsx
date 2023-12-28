@@ -1,5 +1,4 @@
 import { useSelector } from "react-redux";
-import { useS3 } from "../../hook/useS3";
 import "./ProfileuserPostList.css";
 import { RootState } from "../../redux";
 import { authInstance } from "../../interceptors/interceptors";
@@ -11,12 +10,6 @@ import { useCallback, useEffect, useRef } from "react";
 interface childProps {
   username: string | null;
   id: number;
-}
-
-interface BoardListResponse {
-  message: string;
-  statusCode: number;
-  result: Board[];
 }
 
 interface Board {
@@ -38,7 +31,6 @@ interface FileDTO {
 
 const ProfileuserPostList = ({ username, id }: childProps) => {
   const isDarkmode = useSelector((state: RootState) => state.darkmodeSlice.isDarkmode);
-  const { getUrl } = useS3();
   const pageCount = 9;
   const getProfilePostList = async (page: number) => {
     const res = await authInstance.get(
@@ -48,21 +40,12 @@ const ProfileuserPostList = ({ username, id }: childProps) => {
   };
 
   const profileUserPostList = useInfiniteQuery(
-    ["profileUserPostList", username],
+    ["profileUserPostList", username, id],
     ({ pageParam = 0 }) => getProfilePostList(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {
         const nextPage = allPages.length + pageCount;
         return lastPage.result.length !== 0 ? nextPage : undefined;
-      },
-      onSuccess: (data) => {
-        data.pages.map((el: BoardListResponse) => {
-          el.result.map((el: Board) => {
-            if (el.boardFiles?.length !== 0) {
-              el.boardFiles?.map((el) => (el.path = getUrl(el.path)));
-            }
-          });
-        });
       },
     },
   );

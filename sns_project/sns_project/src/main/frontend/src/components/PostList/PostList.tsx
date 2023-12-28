@@ -6,7 +6,6 @@ import { RootState } from "../../redux";
 import { authInstance } from "../../interceptors/interceptors";
 import Loading from "../Common/Loading/Loading";
 import { useLocation } from "react-router-dom";
-import { useS3 } from "../../hook/useS3";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface BoardListResponse {
@@ -41,7 +40,6 @@ const PostList = () => {
   const searchParams = new URLSearchParams(location.search);
   const searchOption = searchParams.get("searchoption");
   const keyword = searchParams.get("searchword");
-  const { getUrl } = useS3();
   const pageCount = 10;
 
   const getPostList = async (page: number) => {
@@ -77,15 +75,6 @@ const PostList = () => {
       getNextPageParam: (lastPage, allPages) => {
         const nextPage = allPages.length + pageCount;
         return lastPage.result?.length !== 0 ? nextPage : undefined;
-      },
-      onSuccess: (data) => {
-        data.pages.map((el: BoardListResponse) => {
-          el.result?.map((el: Board) => {
-            if (el.boardFiles?.length !== 0) {
-              el.boardFiles?.map((el) => (el.path = getUrl(el.path)));
-            }
-          });
-        });
       },
     },
   );
