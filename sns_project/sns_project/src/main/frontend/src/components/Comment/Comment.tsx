@@ -54,6 +54,7 @@ const Comment = ({ boardId }: childProps) => {
   const [hasPage, setHasPage] = useState(true);
   const pageCount = 50;
   const { getUrl } = useS3();
+
   const getComment = async (page: number) => {
     const res = await authInstance.get(
       `/comment/${boardId}?pageStart=${page}&pageCount=${pageCount}`,
@@ -65,8 +66,11 @@ const Comment = ({ boardId }: childProps) => {
   };
 
   const deleteComment = async (commentId: number | undefined) => {
-    if (commentId) {
-      await authInstance.delete(`/comment`, { data: { id: commentId } });
+    if (commentId !== undefined) {
+      const res = await authInstance.delete(`/comment`, { data: { id: commentId } });
+      if (res.data.statusCode === 200) {
+        commentData.refetch();
+      }
     }
   };
 

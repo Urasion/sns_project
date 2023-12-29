@@ -6,6 +6,7 @@ import Comment from "../Comment/Comment";
 import { useS3 } from "../../hook/useS3";
 import Button from "../Common/Button/Button";
 import { authInstance } from "../../interceptors/interceptors";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface childProps {
   info: board;
@@ -33,12 +34,16 @@ interface FileDTO {
 const Post = ({ info, isProfilePost, profileId }: childProps) => {
   const [open, setOpen] = useState(false);
   const isdarkmode = useSelector((state: RootState) => state.darkmodeSlice.isDarkmode);
+  const loginUserName = useSelector((state: RootState) => state.loginSlice.username);
   const loginUserId = useSelector((state: RootState) => state.loginSlice.id);
   const { getUrl } = useS3();
+  const queryClient = useQueryClient();
 
   const deletePost = async (post: board) => {
-    console.log(post);
-    await authInstance.delete(`/board`, { data: { id: post.id } });
+    const res = await authInstance.delete(`/board`, { data: { id: post.id } });
+    if (res.data.statusCode === 200) {
+      queryClient.refetchQueries(["profileUserPostList", loginUserName, loginUserId]);
+    }
   };
 
   return (
