@@ -46,6 +46,6 @@ public class Comment {
         this.content = content;
     }
     public CommentDto convertDto(){
-        return new CommentDto(this.id, this.content, this.state, this.member.convertDto());
+        return new CommentDto(this.id, this.board.getId(),this.content, this.state, this.member.convertDto());
     }
 }

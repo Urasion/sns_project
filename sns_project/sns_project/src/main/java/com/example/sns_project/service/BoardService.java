@@ -54,7 +54,7 @@ public class BoardService {
         }
         return new ResponseDto(HttpStatus.OK.value(), "성공적으로 반환완료", boardList);
     }
-    public ResponseDto getBoardByContent(String content) throws MalformedURLException {
+    public ResponseDto getBoardByContent(String content) {
         List<Board> result = boardRepository.findBoardByContent(content);
         List<BoardDataDto> boardList = new ArrayList<>();
         for (Board board : result) {
@@ -107,7 +107,6 @@ public class BoardService {
     public ResponseDto deleteComment(CommentDto commentDto){
         Comment comment = commentRepository.findById(commentDto.getCommentId());
         commentRepository.delete(comment);
-
         return new ResponseDto(HttpStatus.OK.value(), "댓글 삭제 완료", null);
     }
     public ResponseDto updateComment(String username, CommentDto commentDto){

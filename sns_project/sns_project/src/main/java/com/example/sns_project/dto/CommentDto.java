@@ -20,10 +20,4 @@ public class CommentDto {
     private CommentEnum state;
     private MemberDto member;
 
-    public CommentDto(Long commentId, String content, CommentEnum state, MemberDto member) {
-        this.commentId = commentId;
-        this.content = content;
-        this.state = state;
-        this.member = member;
-    }
 }

@@ -23,7 +23,7 @@ public class BoardRepository {
     }
     public List<Board> findBoardByNamePaging(String name, Integer pageStart, Integer pageCount){
         return em.createQuery("select b from Board b " +
-                "join fetch b.files f " +
+                "left join fetch b.files f " +
                 "where b.member.name like concat('%',:name,'%') ", Board.class)
                 .setMaxResults(pageCount)
                 .setFirstResult(pageStart)
@@ -31,19 +31,19 @@ public class BoardRepository {
     }
     public List<Board> findBoardByName(String name){
         return em.createQuery("select b from Board b " +
-                        "join fetch b.files f " +
+                        "left join fetch b.files f " +
                         "where b.member.name like concat('%',:name,'%') ", Board.class)
                 .setParameter("name", name).getResultList();
     }
     public List<Board> findBoardByContent(String content){
         return em.createQuery("select b from Board b " +
-                "join fetch b.files f " +
+                "left join fetch b.files f " +
                 "where b.content like concat('%',:content,'%') ", Board.class).setParameter("content", content).getResultList();
 
     }
     public Board findById(Long id){
         return em.createQuery("select b from Board b " +
-                "join fetch b.files f " +
+                "left join fetch b.files f " +
                 "where b.id = :id ", Board.class).setParameter("id", id)
                 .getSingleResult();
     }
@@ -58,7 +58,7 @@ public class BoardRepository {
     }
     public List<Board> findBoardById(String id, Integer pageStart, Integer pageCount){
         return em.createQuery("select b from Board b " +
-                "join fetch b.files f " +
+                "left join fetch b.files f " +
                 "where b.member.id = :id ", Board.class).setParameter("id", id)
                 .setMaxResults(pageCount)
                 .setFirstResult(pageStart)

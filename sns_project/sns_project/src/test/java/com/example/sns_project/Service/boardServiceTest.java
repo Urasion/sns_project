@@ -1,6 +1,7 @@
 package com.example.sns_project.Service;
 
 import com.example.sns_project.dto.BoardDataDto;
+import com.example.sns_project.dto.CommentDto;
 import com.example.sns_project.dto.ResponseDto;
 import com.example.sns_project.service.BoardService;
 import com.example.sns_project.service.FileService;
@@ -12,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @SpringBootTest
 @Transactional
@@ -20,5 +22,5 @@ public class boardServiceTest {
     private BoardService boardService;
     @Autowired
     private FileService fileService;
-
+ 
 }

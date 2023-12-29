@@ -55,7 +55,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("리프레시토큰 : {}",refreshToken);
         if(redisRepository.existsById(member.getUsername())){
             log.info("oauth 로그인 이미 다른 곳에서 로그인 되있는 상태입니다.");
-            response.sendRedirect("http://localhost:3000/oauth?error=405");
+            response.sendRedirect("http://snsprojectbucket.s3-website.ap-northeast-2.amazonaws.com/oauth?error=405");
 
         }else{
             log.info("oauth 로그인 성공 front-end로 redirect 시킵니다.");
