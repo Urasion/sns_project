@@ -68,7 +68,7 @@ const Comment = ({ boardId }: childProps) => {
 
   const deleteComment = async (commentId: number | undefined) => {
     if (commentId) {
-      const res = await authInstance.delete(`/comment`, { data: { id: commentId } });
+      const res = await authInstance.delete(`/comment`, { data: { commentId: commentId } });
       if (res.data.statusCode === 200) {
         queryClient.refetchQueries(["comment", boardId]);
       }
