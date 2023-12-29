@@ -59,11 +59,13 @@ const Post = ({ info, isProfilePost, profileId }: childProps) => {
         )}
       </div>
       <div className={`post_content ${isdarkmode && "darkmode"}`}>{info.content}</div>
-      <div className={`post_media_container ${isdarkmode && "darkmode"}`}>
-        {info.boardFiles?.map((el) => (
-          <img className="post_media" src={getUrl(el.path)} alt={`${el.name} img`} key={el.id} />
-        ))}
-      </div>
+      {info.boardFiles?.length !== 0 && (
+        <div className={`post_media_container ${isdarkmode && "darkmode"}`}>
+          {info.boardFiles?.map((el) => (
+            <img className="post_media" src={getUrl(el.path)} alt={`${el.name} img`} key={el.id} />
+          ))}
+        </div>
+      )}
       <div
         className={`display_comment_button ${isdarkmode && "darkmode"} ${open ? "open" : "close"}`}
         onClick={() => setOpen(!open)}
