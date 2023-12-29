@@ -2,11 +2,11 @@ import { useSelector } from "react-redux";
 import "./Comment.css";
 import { RootState } from "../../redux";
 import { authInstance } from "../../interceptors/interceptors";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import Loading from "../Common/Loading/Loading";
 import CommentInput from "./CommentInput/CommentInput";
 import { useS3 } from "../../hook/useS3";
-import { useState } from "react";
+// import { useState } from "react";
 import Button from "../Common/Button/Button";
 
 interface childProps {
@@ -51,25 +51,26 @@ interface FileDTO {
 const Comment = ({ boardId }: childProps) => {
   const isdarkmode = useSelector((state: RootState) => state.darkmodeSlice.isDarkmode);
   const loginUserId = useSelector((state: RootState) => state.loginSlice.id);
-  const [hasPage, setHasPage] = useState(true);
+  // const [hasPage, setHasPage] = useState(true);
   const pageCount = 50;
   const { getUrl } = useS3();
+  const queryClient = useQueryClient();
 
   const getComment = async (page: number) => {
     const res = await authInstance.get(
       `/comment/${boardId}?pageStart=${page}&pageCount=${pageCount}`,
     );
-    if (res.data.result === null) {
-      setHasPage(false);
-    }
+    // if (res.data.result === null) {
+    //   setHasPage(false);
+    // }
     return res.data;
   };
 
   const deleteComment = async (commentId: number | undefined) => {
-    if (commentId !== undefined) {
+    if (commentId) {
       const res = await authInstance.delete(`/comment`, { data: { id: commentId } });
       if (res.data.statusCode === 200) {
-        commentData.refetch();
+        queryClient.refetchQueries(["comment", boardId]);
       }
     }
   };
@@ -84,7 +85,7 @@ const Comment = ({ boardId }: childProps) => {
       },
     },
   );
-  console.log(commentData.data?.pages, hasPage);
+  console.log(commentData.data?.pages);
 
   return (
     <div className={`commentList_container ${isdarkmode && "darkmode"}`}>
@@ -97,10 +98,19 @@ const Comment = ({ boardId }: childProps) => {
       ) : (
         commentData.data?.pages.map(
           (el: commentResponse) =>
-            el.result?.map((el: comment) => (
+            el?.result?.map((el: comment) => (
               <div className={`comment ${isdarkmode && "darkmode"}`} key={el.commentId}>
                 <div className="comment_author_container">
-                  <img className="comment_author" src={getUrl(el.member.profile.path)} />
+                  {el.member.profile ? (
+                    <img className="comment_author" src={getUrl(el.member.profile.path)} />
+                  ) : (
+                    <img
+                      className="comment_author"
+                      src={getUrl(
+                        "https://s3.ap-northeast-2.amazonaws.com/testsnsproject/42c40320-2fbd-4ca3-a8d3-6422c92b697b.jpg",
+                      )}
+                    />
+                  )}
                   <p className="comment_author_name">{el.member.name}</p>
                 </div>
                 <p className="comment_content">{el.content}</p>
