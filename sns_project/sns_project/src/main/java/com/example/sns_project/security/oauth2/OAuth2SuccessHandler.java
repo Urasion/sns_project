@@ -60,7 +60,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }else{
             log.info("oauth 로그인 성공 front-end로 redirect 시킵니다.");
             redisRepository.save(LoginInfo.builder().username(member.getUsername()).accessToken(accessToken).refreshToken(refreshToken).build());
-            response.sendRedirect(" http://snsprojectbucket.s3-website.ap-northeast-2.amazonaws.com/oauth?accessToken="+accessToken+"&refreshToken="+refreshToken);
+            response.sendRedirect("http://snsprojectbucket.s3-website.ap-northeast-2.amazonaws.com/oauth?accessToken="+accessToken+"&refreshToken="+refreshToken);
         }
 
     }
